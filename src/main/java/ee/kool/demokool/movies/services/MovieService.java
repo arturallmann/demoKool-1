@@ -2,6 +2,9 @@ package ee.kool.demokool.movies.services;
 
 import ee.kool.demokool.actors.dto.Actor;
 import ee.kool.demokool.movies.dto.Film;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -9,6 +12,10 @@ import java.util.List;
 
 @Service
 public class MovieService {
+
+  @Autowired
+  @Qualifier("jmsTemplateTopic")
+  JmsTemplate jmsTemplate;
 
   public List<Film> mockMovies(){
 
@@ -32,5 +39,9 @@ public class MovieService {
      movie.setId(id);
      movie.setName("James Bond");
      return movie;
+  }
+
+  public void storeMovie(Film film) {
+    jmsTemplate.convertAndSend("MOVIE_TOPIC", film);
   }
 }
